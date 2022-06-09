@@ -109,6 +109,8 @@ int main(int argc, char** argv) {
                 while(millisec_now - millisec_start < 0)
                 {
                     millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                    printf("%0.3f\n",(float)((millisec_start-millisec_now)*0.001f));
+                    std::flush(std::cout);
                     esp.readSerialPort(input, MAX_DATA_LENGTH);
                 }
                 startup = true;
@@ -124,6 +126,8 @@ int main(int argc, char** argv) {
                     while(millisec_now - millisec_start < 0)
                     {
                         millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                        printf("%0.3f\n",(float)((millisec_start-millisec_now)*0.001f));
+                        std::flush(std::cout);
                         esp.readSerialPort(input, MAX_DATA_LENGTH);
                     }
                     wait = true;
@@ -173,6 +177,8 @@ int main(int argc, char** argv) {
                     while(millisec_now - millisec_start < 0)
                     {
                         millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                        printf("%0.3f\n",(float)((millisec_start-millisec_now)*0.001f));
+                        std::flush(std::cout);                        
                         esp.readSerialPort(input, MAX_DATA_LENGTH);
                     }
                     wait = true;
@@ -198,6 +204,8 @@ int main(int argc, char** argv) {
                         std::flush(std::cout);
                     }
                     calib_max = true;
+                    std::cout << "calib_done" << "\n";
+                    std::flush(std::cout);
                 }                
             }
             else if(millisec_now - millisec_start > 200)
@@ -283,7 +291,7 @@ int main(int argc, char** argv) {
                 }
                 if(pass_bit)
                 {
-                    std::cout << imu << "\n";
+                    std::cout << res << "\n";
                     std::flush(std::cout);
                 }
                 size_updated_float = 0;

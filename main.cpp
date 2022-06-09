@@ -22,8 +22,8 @@ int data[1000];
 int highest_label = 0;
 
 //Resistor proterties
-int R_elim[10] = {0,1,0,1,0,1,1,0,0,0};
-int R_treshold[10] = {0,180000,185000,0,0,185000,180000,0,0,0};
+int R_elim[10] = {0,1,0,1,0,1,1,0,1,0};
+//int R_treshold[10] = {0,180000,185000,0,0,185000,180000,0,0,0};
 int R_min[10] = {0};
 int R_max[10] = {0};
 int R_avg[10] = {0};
@@ -232,13 +232,18 @@ int main(int argc, char** argv) {
                         for(int k=10; k<13; k++)
                         {
                             //std::cout << "IMU:" << abs(data[j+k] - abs(imu_avg[k-10])) << "\n";
-                            if(abs(data[j+k] - abs(imu_avg[k-10])) >= 50000)
+                            // if(abs(data[j+k] - abs(imu_avg[k-10])) >= 30000)
+                            if((data[j+k] - imu_avg[k-10]) > 30000)
                             {
-                                output_imu += sprintf(output_imu,"0");
+                                output_imu += sprintf(output_imu,"1");
+                            }
+                            else if((data[j+k] - imu_avg[k-10]) < -30000)
+                            {
+                                output_imu += sprintf(output_imu,"2");
                             }
                             else
                             {
-                                output_imu += sprintf(output_imu,"1");
+                                output_imu += sprintf(output_imu,"0");
                             }
                         //printf("yaw: %d, pitch: %d, roll: %d \n",data[j+12]-imu_avg[2],data[j+11]-imu_avg[1],data[j+10]-imu_avg[0]);
                         } 
@@ -255,15 +260,15 @@ int main(int argc, char** argv) {
                         j=j+13;
                     }   
                 //std::cout << "passbit : " << pass_bit << "\n";
-                if(!(strcmp("010",imu) && strcmp("110",imu)))
-                {
-                    updown_flag = true;
-                }
-                else if(!(strcmp("001",imu) && strcmp("101",imu)))
+                if(!(strcmp("020",imu) && strcmp("220",imu)))
                 {
                     wave_flag = true;
                 }
-                else if(!strcmp("111",imu))
+                else if(!(strcmp("001",imu) && strcmp("201",imu)))
+                {
+                    updown_flag = true;
+                }
+                else if(!strcmp("000",imu))
                 {
                     if(updown_flag)
                     {
@@ -278,7 +283,7 @@ int main(int argc, char** argv) {
                 }
                 if(pass_bit)
                 {
-                    std::cout << res << "\n";
+                    std::cout << imu << "\n";
                     std::flush(std::cout);
                 }
                 size_updated_float = 0;

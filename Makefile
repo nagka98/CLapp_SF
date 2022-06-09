@@ -1,7 +1,7 @@
 
 CC = g++
-CFLAGS = -Wall -g
- 
+CFLAGS = -Wall -c -g
+CFLAGS = -static -static-libgcc -static-libstdc++
 # ****************************************************
 # Targets needed to bring the executable up to date
  
@@ -15,7 +15,7 @@ main.o: main.cpp SerialPort.h
  
 SerialPort.o: SerialPort.cpp SerialPort.h
 	$(CC) $(CFLAGS) -c SerialPort.cpp
-
+	
 clean:
 	rm *.o main
 

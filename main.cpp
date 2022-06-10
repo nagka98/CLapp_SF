@@ -22,7 +22,7 @@ int data[1000];
 int highest_label = 0;
 
 //Resistor proterties
-int R_elim[10] = {0,1,0,1,0,1,1,0,1,0};
+int R_elim[10] = {0,0,1,0,0,1,0,1,1,0};
 //int R_treshold[10] = {0,180000,185000,0,0,185000,180000,0,0,0};
 int R_min[10] = {0};
 int R_max[10] = {0};
@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
             {
                 std::cout << "startup" << "\n";
                 std::flush(std::cout);
-                millisec_start = millisec_now + 10000;
+                millisec_start = millisec_now + 5000;
                 while(millisec_now - millisec_start < 0)
                 {
                     millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
                 {
                     std::cout << "calib_min" << "\n";
                     std::flush(std::cout);
-                    millisec_start = millisec_now + 10000;
+                    millisec_start = millisec_now + 5000;
                     while(millisec_now - millisec_start < 0)
                     {
                         millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
                 {
                     std::cout << "calib_max" << "\n";
                     std::flush(std::cout);
-                    millisec_start = millisec_now + 10000;
+                    millisec_start = millisec_now + 5000;
                     while(millisec_now - millisec_start < 0)
                     {
                         millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();

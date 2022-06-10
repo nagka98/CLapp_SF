@@ -27,7 +27,9 @@ int R_elim[10] = {0,0,1,0,0,1,0,1,1,0};
 int R_min[10] = {0};
 int R_max[10] = {0};
 int R_avg[10] = {0};
-
+int Z_min[10] = {0};
+int Z_max[10] = {0};
+int Z_avg[10] = {0};
 //IMU properties
 int imu_avg[3] = {0};
  
@@ -42,21 +44,25 @@ int main(int argc, char** argv) {
     bool calib_min = false;
     bool calib_max = false;
     bool wait = false;
+    int resistance_flag = 0;
+    int impedance_flag =  0;
 
-    if(argc == 2)
+    if(argc == 4)
     {
         s = atoi(argv[1]);
+        resistance_flag = atoi(argv[2]);
+        impedance_flag = atoi(argv[3]);
     }
     else
     {
-        std::cout << "please add port number" << argc;
+        std::cout << "please add port number\n" << argc;
         //exit(0);
     }
     sprintf(port,"\\\\.\\COM%d",s);
 
     SerialPort esp(port);
         if (esp.isConnected()) {
-        std::cout << "connection is established" << "\n";
+        std::cout << "connection is established\n" << "\n";
         std::flush(std::cout);
     }
     else
@@ -109,12 +115,13 @@ int main(int argc, char** argv) {
                 while(millisec_now - millisec_start < 0)
                 {
                     millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-                    printf("%0.3f\n",(float)((millisec_start-millisec_now)*0.001f));
+                    printf("%d\n",(int)((millisec_start-millisec_now)/1000));//uncomment
                     std::flush(std::cout);
                     esp.readSerialPort(input, MAX_DATA_LENGTH);
                 }
                 startup = true;
                 size_updated_float = 0;
+                size_updated = 0;
             }
             else if(!calib_min)
             {
@@ -126,7 +133,7 @@ int main(int argc, char** argv) {
                     while(millisec_now - millisec_start < 0)
                     {
                         millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-                        printf("%0.3f\n",(float)((millisec_start-millisec_now)*0.001f));
+                        printf("%d\n",(int)((millisec_start-millisec_now)/1000));//uncomment
                         std::flush(std::cout);
                         esp.readSerialPort(input, MAX_DATA_LENGTH);
                     }
@@ -141,28 +148,42 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+13)
+                        for(int n = m; n < size_updated_float; n=n+20)
                         {
                             //std::cout << "data :" << data[n] << "\n";
                             temp += data[n];
                             count++;
                         }
                         R_min[m] = (int)(temp/count);
+                        //std::cout << "R_min :\n"; 
                         //std::cout << R_min[m] <<"\n"; 
                     }
-                    for(int m = 10; m < 13; m++)
+                    for(int m = 10; m < 20; m++)
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+13)
+                        for(int n = m; n < size_updated_float; n=n+20)
                         {
                             //std::cout << "data :" << data[n] << "\n";
                             temp += data[n];
                             count++;
                         }
-                        imu_avg[m-10] = (int)(temp/count);
-                        //std::cout << imu_avg[m-10] <<"\n"; 
+                        Z_min[m-10] = (int)(temp/count);
+                        //std::cout << Z_min[m] <<"\n"; 
                     }
+                    // for(int m = 20; m < 23; m++)
+                    // {
+                    //     int count = 0;
+                    //     temp = 0;
+                    //     for(int n = m; n < size_updated_float; n=n+29)
+                    //     {
+                    //         //std::cout << "data :" << data[n] << "\n";
+                    //         temp += data[n];
+                    //         count++;
+                    //     }
+                    //     imu_avg[m-20] = (int)(temp/count);
+                        //std::cout << imu_avg[m-10] <<"\n"; 
+                    //}
                     calib_min = true;
                     wait = false;
                 }
@@ -177,12 +198,13 @@ int main(int argc, char** argv) {
                     while(millisec_now - millisec_start < 0)
                     {
                         millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-                        printf("%0.3f\n",(float)((millisec_start-millisec_now)*0.001f));
+                        printf("%d\n",(int)((millisec_start-millisec_now)/1000));//uncomment
                         std::flush(std::cout);                        
                         esp.readSerialPort(input, MAX_DATA_LENGTH);
                     }
                     wait = true;
                     size_updated_float = 0;
+                    size_updated = 0;
                 }
                 if(millisec_now - millisec_start > 200)
                 {
@@ -192,7 +214,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+13)
+                        for(int n = m; n < size_updated_float; n=n+20)
                         {
                             temp += data[n];
                             count++;
@@ -200,7 +222,22 @@ int main(int argc, char** argv) {
                         R_max[m] = (int)temp/count;
                         R_avg[m] = (int)((R_min[m] + R_max[m])/2);
                         //std::cout << R_max[m] <<"\n"; 
-                        //std::cout << R_avg[m] << "\n";
+                        //std::cout << R_avg[m] << "\n";//comment
+                        std::flush(std::cout);
+                    }
+                    for(int m = 10; m < 20; m++)
+                    {
+                        int count = 0;
+                        temp = 0;
+                        for(int n = m; n < size_updated_float; n=n+20)
+                        {
+                            temp += data[n];
+                            count++;
+                        }
+                        Z_max[m-10] = (int)temp/count;
+                        Z_avg[m-10] = (int)((Z_min[m-10] + Z_max[m-10])/2);
+                        //std::cout << Z_max[m] <<"\n"; 
+                        //std::cout << Z_avg[m-10] << "\n";//comment
                         std::flush(std::cout);
                     }
                     calib_max = true;
@@ -210,22 +247,27 @@ int main(int argc, char** argv) {
             }
             else if(millisec_now - millisec_start > 200)
             {
+                //std::cout << "size " << size_updated_float << "\n";
                 millisec_start = millisec_now;
                 int j=0;
                 char temp[10];
                 bool pass_bit = true;
+                if(size_updated_float%20 == 0)
+                {
                 while(j < size_updated_float)
                     {
                         char *output = res;
-                        char *output_imu = imu;
+                        //char *output_imu = imu;
                         for(int k=0; k<10; k++)
                         {
                             if(!R_elim[k])
                             {
-                                goto loop_end;
+                                goto loop_end1;
                             }
                             //std::cout << "data :" << data[j+k] << "\n"; 
                             //std::cout << "k : " << j+k << "\n";
+                            if(resistance_flag == 1)
+                            {
                             if(data[j+k] <= R_avg[k])
                             {
                                 output += sprintf(output,"0");
@@ -234,27 +276,50 @@ int main(int argc, char** argv) {
                             {
                                 output += sprintf(output,"1");
                             }
-                            loop_end:
+                            }
+                            loop_end1:
                                 asm("NOP");
                         }
-                        for(int k=10; k<13; k++)
+                        for(int k=10; k<20; k++)
                         {
-                            //std::cout << "IMU:" << abs(data[j+k] - abs(imu_avg[k-10])) << "\n";
-                            // if(abs(data[j+k] - abs(imu_avg[k-10])) >= 30000)
-                            if((data[j+k] - imu_avg[k-10]) > 30000)
+                            if(!R_elim[k-10])
                             {
-                                output_imu += sprintf(output_imu,"1");
+                                goto loop_end2;
                             }
-                            else if((data[j+k] - imu_avg[k-10]) < -30000)
+                            //std::cout << "data :" << data[j+k] << "\n"; 
+                            //std::cout << "k : " << j+k << "\n";
+                            if(impedance_flag == 1)
                             {
-                                output_imu += sprintf(output_imu,"2");
+                            if(data[j+k] <= Z_avg[k-10])
+                            {
+                                output += sprintf(output,"0");
                             }
                             else
                             {
-                                output_imu += sprintf(output_imu,"0");
+                                output += sprintf(output,"1");
                             }
+                            }
+                            loop_end2:
+                                asm("NOP");
+                        }
+                        // for(int k=20; k<23; k++)
+                        // {
+                        //     //std::cout << "IMU:" << abs(data[j+k] - abs(imu_avg[k-10])) << "\n";
+                        //     // if(abs(data[j+k] - abs(imu_avg[k-10])) >= 30000)
+                        //     if((data[j+k] - imu_avg[k-20]) > 50000)
+                        //     {
+                        //         output_imu += sprintf(output_imu,"1");
+                        //     }
+                        //     else if((data[j+k] - imu_avg[k-20]) < -50000)
+                        //     {
+                        //         output_imu += sprintf(output_imu,"2");
+                        //     }
+                        //     else
+                        //     {
+                        //         output_imu += sprintf(output_imu,"0");
+                        //     }
                         //printf("yaw: %d, pitch: %d, roll: %d \n",data[j+12]-imu_avg[2],data[j+11]-imu_avg[1],data[j+10]-imu_avg[0]);
-                        } 
+                        //} 
                         if(!strcmp(temp,res) && pass_bit)
                         {
                             pass_bit = true;
@@ -265,36 +330,38 @@ int main(int argc, char** argv) {
                         }
 
                         sprintf(temp,"%s",res);
-                        j=j+13;
-                    }   
+                        j=j+20;
+                    }
+                }   
                 //std::cout << "passbit : " << pass_bit << "\n";
-                if(!(strcmp("020",imu) && strcmp("220",imu)))
-                {
-                    wave_flag = true;
-                }
-                else if(!(strcmp("001",imu) && strcmp("201",imu)))
-                {
-                    updown_flag = true;
-                }
-                else if(!strcmp("000",imu))
-                {
-                    if(updown_flag)
-                    {
-                        std::cout << "updown" << "\n";
-                        updown_flag = false;
-                    }
-                    else if(wave_flag)
-                    { 
-                        std::cout << "wave" << "\n";
-                        wave_flag = false;
-                    }
-                }
+                // if(!(strcmp("020",imu) && strcmp("220",imu)))
+                // {
+                //     wave_flag = true;
+                // }
+                // else if(!(strcmp("001",imu) && strcmp("201",imu)))
+                // {
+                //     updown_flag = true;
+                // }
+                // else if(!strcmp("000",imu))
+                // {
+                //     if(updown_flag)
+                //     {
+                //         std::cout << "updown" << "\n";
+                //         updown_flag = false;
+                //     }
+                //     else if(wave_flag)
+                //     { 
+                //         std::cout << "wave" << "\n";
+                //         wave_flag = false;
+                //     }
+                // }
                 if(pass_bit)
                 {
-                    std::cout << res << "\n";
+                    std::cout << res << "\n";//uncomment
                     std::flush(std::cout);
                 }
                 size_updated_float = 0;
+                size_updated = 0;
                 memset(data, 0, sizeof(data));
             }
         }

@@ -18,7 +18,7 @@ char input[MAX_DATA_LENGTH];
 char port[10];
 bool wave_flag = false;
 bool updown_flag = false;
-int data[1000];
+int data[500];
 int highest_label = 0;
 
 //Resistor proterties
@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
                         data[size_updated_float] = strtof((char *)recv_data, NULL);
                         //std::cout << size_updated_float << "\n";
                         size_updated_float++;
-                        if (size_updated_float == 1000)
+                        if (size_updated_float == 500)
                         {
                             std::cout << "float size exceeded" << "\n";
                             size_updated_float = 0;
@@ -258,6 +258,8 @@ int main(int argc, char** argv) {
                     {
                         char *output = res;
                         //char *output_imu = imu;
+                        if(resistance_flag == 1)
+                        {
                         for(int k=0; k<10; k++)
                         {
                             if(!R_elim[k])
@@ -266,8 +268,6 @@ int main(int argc, char** argv) {
                             }
                             //std::cout << "data :" << data[j+k] << "\n"; 
                             //std::cout << "k : " << j+k << "\n";
-                            if(resistance_flag == 1)
-                            {
                             if(data[j+k] <= R_avg[k])
                             {
                                 output += sprintf(output,"0");
@@ -276,10 +276,12 @@ int main(int argc, char** argv) {
                             {
                                 output += sprintf(output,"1");
                             }
-                            }
                             loop_end1:
                                 asm("NOP");
                         }
+                        }
+                        if(impedance_flag == 1)
+                        {
                         for(int k=10; k<20; k++)
                         {
                             if(!R_elim[k-10])
@@ -288,8 +290,6 @@ int main(int argc, char** argv) {
                             }
                             //std::cout << "data :" << data[j+k] << "\n"; 
                             //std::cout << "k : " << j+k << "\n";
-                            if(impedance_flag == 1)
-                            {
                             if(data[j+k] <= Z_avg[k-10])
                             {
                                 output += sprintf(output,"0");
@@ -298,9 +298,9 @@ int main(int argc, char** argv) {
                             {
                                 output += sprintf(output,"1");
                             }
-                            }
                             loop_end2:
                                 asm("NOP");
+                        }
                         }
                         // for(int k=20; k<23; k++)
                         // {
@@ -332,7 +332,10 @@ int main(int argc, char** argv) {
                         sprintf(temp,"%s",res);
                         j=j+20;
                     }
-                }   
+                }
+                else{
+                    pass_bit = false;
+                } 
                 //std::cout << "passbit : " << pass_bit << "\n";
                 // if(!(strcmp("020",imu) && strcmp("220",imu)))
                 // {
@@ -357,11 +360,11 @@ int main(int argc, char** argv) {
                 // }
                 if(pass_bit)
                 {
-                    std::cout << res << "\n";//uncomment
+                    //std::cout << size_updated_float << "\n";
+                    std::cout << res << "\n";
                     std::flush(std::cout);
                 }
                 size_updated_float = 0;
-                size_updated = 0;
                 memset(data, 0, sizeof(data));
             }
         }

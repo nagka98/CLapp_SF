@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 
     SerialPort esp(port);
         if (esp.isConnected()) {
-        std::cout << "connection is established\n" << "\n";
+        std::cout << "connection_ok\n" << "\n";
         std::flush(std::cout);
     }
     else

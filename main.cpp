@@ -22,7 +22,7 @@ int data[500];
 int highest_label = 0;
 
 //Resistor proterties
-int R_elim[10] = {0,0,1,0,0,1,0,1,1,0};
+int R_elim[10] = {1,0,1,0,0,1,0,1,1,0};
 //int R_treshold[10] = {0,180000,185000,0,0,185000,180000,0,0,0};
 int R_min[10] = {0};
 int R_max[10] = {0};
@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+20)
+                        for(int n = m; n < size_updated_float; n=n+23)
                         {
                             //std::cout << "data :" << data[n] << "\n";
                             temp += data[n];
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+20)
+                        for(int n = m; n < size_updated_float; n=n+23)
                         {
                             //std::cout << "data :" << data[n] << "\n";
                             temp += data[n];
@@ -171,19 +171,19 @@ int main(int argc, char** argv) {
                         Z_min[m-10] = (int)(temp/count);
                         //std::cout << Z_min[m] <<"\n"; 
                     }
-                    // for(int m = 20; m < 23; m++)
-                    // {
-                    //     int count = 0;
-                    //     temp = 0;
-                    //     for(int n = m; n < size_updated_float; n=n+29)
-                    //     {
-                    //         //std::cout << "data :" << data[n] << "\n";
-                    //         temp += data[n];
-                    //         count++;
-                    //     }
-                    //     imu_avg[m-20] = (int)(temp/count);
-                        //std::cout << imu_avg[m-10] <<"\n"; 
-                    //}
+                    for(int m = 20; m < 23; m++)
+                    {
+                        int count = 0;
+                        temp = 0;
+                        for(int n = m; n < size_updated_float; n=n+23)
+                        {
+                            //std::cout << "data :" << data[n] << "\n";
+                            temp += data[n];
+                            count++;
+                        }
+                        imu_avg[m-20] = (int)(temp/count);
+                        //std::cout << imu_avg[m-20] <<"\n"; 
+                    }
                     calib_min = true;
                     wait = false;
                 }
@@ -214,7 +214,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+20)
+                        for(int n = m; n < size_updated_float; n=n+23)
                         {
                             temp += data[n];
                             count++;
@@ -229,7 +229,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+20)
+                        for(int n = m; n < size_updated_float; n=n+23)
                         {
                             temp += data[n];
                             count++;
@@ -252,12 +252,12 @@ int main(int argc, char** argv) {
                 int j=0;
                 char temp[10];
                 bool pass_bit = true;
-                if(size_updated_float%20 == 0)
+                if(size_updated_float%23 == 0)
                 {
                 while(j < size_updated_float)
                     {
                         char *output = res;
-                        //char *output_imu = imu;
+                        char *output_imu = imu;
                         if(resistance_flag == 1)
                         {
                         for(int k=0; k<10; k++)
@@ -301,25 +301,24 @@ int main(int argc, char** argv) {
                             loop_end2:
                                 asm("NOP");
                         }
-                        }
-                        // for(int k=20; k<23; k++)
-                        // {
-                        //     //std::cout << "IMU:" << abs(data[j+k] - abs(imu_avg[k-10])) << "\n";
-                        //     // if(abs(data[j+k] - abs(imu_avg[k-10])) >= 30000)
-                        //     if((data[j+k] - imu_avg[k-20]) > 50000)
-                        //     {
-                        //         output_imu += sprintf(output_imu,"1");
-                        //     }
-                        //     else if((data[j+k] - imu_avg[k-20]) < -50000)
-                        //     {
-                        //         output_imu += sprintf(output_imu,"2");
-                        //     }
-                        //     else
-                        //     {
-                        //         output_imu += sprintf(output_imu,"0");
-                        //     }
-                        //printf("yaw: %d, pitch: %d, roll: %d \n",data[j+12]-imu_avg[2],data[j+11]-imu_avg[1],data[j+10]-imu_avg[0]);
-                        //} 
+                        for(int k=20; k<23; k++)
+                        {
+                            //std::cout << "IMU:" << abs(data[j+k] - abs(imu_avg[k-10])) << "\n";
+                            // if(abs(data[j+k] - abs(imu_avg[k-10])) >= 30000)
+                            if((data[j+k] - imu_avg[k-20]) > 50000)
+                            {
+                                output_imu += sprintf(output_imu,"1");
+                            }
+                            else if((data[j+k] - imu_avg[k-20]) < -50000)
+                            {
+                                output_imu += sprintf(output_imu,"2");
+                            }
+                            else
+                            {
+                                output_imu += sprintf(output_imu,"0");
+                            }
+                        // printf("yaw: %d, pitch: %d, roll: %d \n",data[j+22]-imu_avg[2],data[j+21]-imu_avg[1],data[j+20]-imu_avg[0]);
+                        } 
                         if(!strcmp(temp,res) && pass_bit)
                         {
                             pass_bit = true;
@@ -330,34 +329,34 @@ int main(int argc, char** argv) {
                         }
 
                         sprintf(temp,"%s",res);
-                        j=j+20;
+                        j=j+23;
                     }
                 }
                 else{
                     pass_bit = false;
                 } 
                 //std::cout << "passbit : " << pass_bit << "\n";
-                // if(!(strcmp("020",imu) && strcmp("220",imu)))
-                // {
-                //     wave_flag = true;
-                // }
-                // else if(!(strcmp("001",imu) && strcmp("201",imu)))
-                // {
-                //     updown_flag = true;
-                // }
-                // else if(!strcmp("000",imu))
-                // {
-                //     if(updown_flag)
-                //     {
-                //         std::cout << "updown" << "\n";
-                //         updown_flag = false;
-                //     }
-                //     else if(wave_flag)
-                //     { 
-                //         std::cout << "wave" << "\n";
-                //         wave_flag = false;
-                //     }
-                // }
+                if(!(strcmp("020",imu) && strcmp("220",imu)))
+                {
+                    wave_flag = true;
+                }
+                else if(!(strcmp("001",imu) && strcmp("201",imu)))
+                {
+                    updown_flag = true;
+                }
+                else if(!strcmp("000",imu))
+                {
+                    if(updown_flag)
+                    {
+                        std::cout << "updown" << "\n";
+                        updown_flag = false;
+                    }
+                    else if(wave_flag)
+                    { 
+                        std::cout << "wave" << "\n";
+                        wave_flag = false;
+                    }
+                }
                 if(pass_bit)
                 {
                     //std::cout << size_updated_float << "\n";

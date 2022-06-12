@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+23)
+                        for(int n = m; n < size_updated_float; n=n+29)
                         {
                             //std::cout << "data :" << data[n] << "\n";
                             temp += data[n];
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+23)
+                        for(int n = m; n < size_updated_float; n=n+29)
                         {
                             //std::cout << "data :" << data[n] << "\n";
                             temp += data[n];
@@ -175,7 +175,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+23)
+                        for(int n = m; n < size_updated_float; n=n+29)
                         {
                             //std::cout << "data :" << data[n] << "\n";
                             temp += data[n];
@@ -214,7 +214,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+23)
+                        for(int n = m; n < size_updated_float; n=n+29)
                         {
                             temp += data[n];
                             count++;
@@ -229,7 +229,7 @@ int main(int argc, char** argv) {
                     {
                         int count = 0;
                         temp = 0;
-                        for(int n = m; n < size_updated_float; n=n+23)
+                        for(int n = m; n < size_updated_float; n=n+29)
                         {
                             temp += data[n];
                             count++;
@@ -252,7 +252,7 @@ int main(int argc, char** argv) {
                 int j=0;
                 char temp[10];
                 bool pass_bit = true;
-                if(size_updated_float%23 == 0)
+                if(size_updated_float%29 == 0)
                 {
                 while(j < size_updated_float)
                     {
@@ -301,6 +301,7 @@ int main(int argc, char** argv) {
                             loop_end2:
                                 asm("NOP");
                         }
+                        }
                         for(int k=20; k<23; k++)
                         {
                             //std::cout << "IMU:" << abs(data[j+k] - abs(imu_avg[k-10])) << "\n";
@@ -329,13 +330,9 @@ int main(int argc, char** argv) {
                         }
 
                         sprintf(temp,"%s",res);
-                        j=j+23;
+                        j=j+29;
                     }
-                }
-                else{
-                    pass_bit = false;
-                } 
-                //std::cout << "passbit : " << pass_bit << "\n";
+                                    //std::cout << "passbit : " << pass_bit << "\n";
                 if(!(strcmp("020",imu) && strcmp("220",imu)))
                 {
                     wave_flag = true;
@@ -357,6 +354,10 @@ int main(int argc, char** argv) {
                         wave_flag = false;
                     }
                 }
+                }
+                else{
+                    pass_bit = false;
+                } 
                 if(pass_bit)
                 {
                     //std::cout << size_updated_float << "\n";

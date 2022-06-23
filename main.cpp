@@ -22,8 +22,7 @@ int data[500];
 int highest_label = 0;
 
 //Resistor proterties
-int R_elim[10] = {1,0,1,0,0,1,0,1,1,0};
-//int R_treshold[10] = {0,180000,185000,0,0,185000,180000,0,0,0};
+int R_elim[10] = {1,0,0,1,0,1,1,0,1,0};
 int R_min[10] = {0};
 int R_max[10] = {0};
 int R_avg[10] = {0};

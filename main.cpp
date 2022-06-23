@@ -25,7 +25,7 @@ int highest_label = 0;
 int port_num = 5000;
 
 //Resistor proterties
-int R_elim[10] = {0,1,0,1,0,1,0,1,1,0};
+int R_elim[10] = {0,0,0,1,0,1,0,1,1,0};
 int R_min[10] = {0};
 int R_max[10] = {0};
 int R_avg[10] = {0};

@@ -21,8 +21,11 @@ bool updown_flag = false;
 int data[500];
 int highest_label = 0;
 
+//tcp attributes
+int port_num = 5000;
+
 //Resistor proterties
-int R_elim[10] = {1,0,0,1,0,1,1,0,1,0};
+int R_elim[10] = {0,1,0,1,0,1,0,1,1,0};
 int R_min[10] = {0};
 int R_max[10] = {0};
 int R_avg[10] = {0};
@@ -79,7 +82,9 @@ int main(int argc, char** argv) {
             auto millisec_now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
             data_read = esp.readSerialPort(input, MAX_DATA_LENGTH);
             if(data_read > 0)
-            {  
+            {
+                // std::cout << input;
+                // std::flush(std::cout);
             for (int i = 0; i < data_read; i++)
                 {
                     if (input[i] == '\n')
@@ -102,7 +107,7 @@ int main(int argc, char** argv) {
                             std::cout << "float size exceeded" << "\n";
                             size_updated_float = 0;
                         }
-                        memset((char *)recv_data, 0, sizeof(recv_data));
+                        memset(recv_data, 0, sizeof(recv_data));
                     }
                 }
             }
@@ -244,7 +249,7 @@ int main(int argc, char** argv) {
                     std::flush(std::cout);
                 }                
             }
-            else if(millisec_now - millisec_start > 200)
+            else if(millisec_now - millisec_start > 100)
             {
                 //std::cout << "size " << size_updated_float << "\n";
                 millisec_start = millisec_now;
@@ -267,6 +272,8 @@ int main(int argc, char** argv) {
                             }
                             //std::cout << "data :" << data[j+k] << "\n"; 
                             //std::cout << "k : " << j+k << "\n";
+                            if(data[j+k] != 0)
+                            {
                             if(data[j+k] <= R_avg[k])
                             {
                                 output += sprintf(output,"0");
@@ -274,6 +281,7 @@ int main(int argc, char** argv) {
                             else
                             {
                                 output += sprintf(output,"1");
+                            }
                             }
                             loop_end1:
                                 asm("NOP");
@@ -289,6 +297,8 @@ int main(int argc, char** argv) {
                             }
                             //std::cout << "data :" << data[j+k] << "\n"; 
                             //std::cout << "k : " << j+k << "\n";
+                            if(data[j+k] != 0)
+                            {
                             if(data[j+k] <= Z_avg[k-10])
                             {
                                 output += sprintf(output,"0");
@@ -296,6 +306,7 @@ int main(int argc, char** argv) {
                             else
                             {
                                 output += sprintf(output,"1");
+                            }
                             }
                             loop_end2:
                                 asm("NOP");
@@ -305,6 +316,8 @@ int main(int argc, char** argv) {
                         {
                             //std::cout << "IMU:" << abs(data[j+k] - abs(imu_avg[k-10])) << "\n";
                             // if(abs(data[j+k] - abs(imu_avg[k-10])) >= 30000)
+                            if(data[j+k] != 0)
+                            {
                             if((data[j+k] - imu_avg[k-20]) > 50000)
                             {
                                 output_imu += sprintf(output_imu,"1");
@@ -316,6 +329,7 @@ int main(int argc, char** argv) {
                             else
                             {
                                 output_imu += sprintf(output_imu,"0");
+                            }
                             }
                         // printf("yaw: %d, pitch: %d, roll: %d \n",data[j+22]-imu_avg[2],data[j+21]-imu_avg[1],data[j+20]-imu_avg[0]);
                         } 
